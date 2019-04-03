@@ -6,12 +6,14 @@ This backup script will first stop the running rancher server, create a tgz of /
 
 ## Build
 
+```bash
 docker build -t kpnictconsulting/rancher-backup-s3 .
+```
 
 ## Run
 
 You need a server with Rancher installed.
 
-'''bash
+```bash
 docker run --rm -e S3_ACCESS_KEY=x -e S3_SECRET_KEY=y -e S3_HOST=minio:9000 -e S3_BUCKET=rancher-server-backup -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher kpnictconsulting/rancher-backup-s3
-'''
+```
