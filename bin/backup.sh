@@ -6,7 +6,7 @@ set -e
 RANCHER_DATA_DIR="/var/lib/rancher"
 BACKUP_DIR="/tmp"
 BACKUP_DATE=$(date +"%F")
-BACKUP_FILE="$BACKUP_DIR/rancher_$BACKUP_DATE.tar.gz"
+BACKUP_FILE="rancher_$BACKUP_DATE.tar.gz"
 S3CMD_CONFIG=/root/.s3cfg
 
 if [ -z "$S3_ACCESS_KEY" ]; then
@@ -52,7 +52,7 @@ docker stop $RANCHER_DOCKER_ID
 
 echo "Create backup from $RANCHER_DATA_DIR"
 cd $RANCHER_DATA_DIR 
-tar -zcf $BACKUP_FILE *
+tar -zcf $BACKUP_DIR/$BACKUP_FILE *
 
 echo "Starting Rancher Server"
 docker start $RANCHER_DOCKER_ID
@@ -61,8 +61,9 @@ docker start $RANCHER_DOCKER_ID
 # s3cmd mb s3://$S3_BUCKET
 
 echo "Transfer backup to S3 $S3_HOST/$S3_BUCKET"
-s3cmd --no-check-certificate put $BACKUP_FILE s3://$S3_BUCKET/$BACKUP_FILE
+s3cmd --no-check-certificate put $BACKUP_DIR/$BACKUP_FILE s3://$S3_BUCKET/$BACKUP_FILE
+
 echo "Remove local backup"
-rm $BACKUP_DIR/rancher-backup.tar
+rm $BACKUP_DIR/$BACKUP_FILE
 
 exit 0
